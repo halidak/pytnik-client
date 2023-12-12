@@ -4,6 +4,7 @@ img{
 }
 li{
     list-style-type: none;
+    font-family: 'Courier New', monospace;
 }
 ul{
     padding: 0;
@@ -12,4 +13,37 @@ ul{
     position: absolute;
     bottom: 0;
     width: 100%;
+    font-family: 'Courier New', monospace;
 }
+
+h2, p{
+    font-family: 'Courier New', monospace;
+}
+
+.costListStyle {
+    position: absolute;
+    top: 0;
+    left: 1050px;
+    width: 200px;
+    height: 100%;
+    background-color: black;
+    overflow: auto;
+    color: rgb(102, 168, 102);
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .map-button {
+    padding: 10px;
+    font-size: 16px;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 2px;
+  }
+  
+  .map-button:hover {
+    background-color: #505253; /* Slightly Darker Blue on Hover */
+  } 
+

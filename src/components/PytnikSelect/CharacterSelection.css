@@ -1,0 +1,37 @@
+/* CharacterSelection.css */
+
+.character-selection-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  
+  .character-select {
+    padding: 8px;
+    font-size: 16px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 150px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .character-select:hover {
+    background-color: #303030;
+  }
+  
+  .character-image-container {
+    margin-left: 20px;
+  }
+  
+  .character-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  }
+  

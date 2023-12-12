@@ -293,11 +293,9 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
           selectedCharacter={selectedCharacter}
           onSelectCharacter={setSelectedCharacter}
         />
-        <button onClick={() => handleMapSelection('map0', selectedCharacter)}>Map 0</button>
-        <button onClick={() => handleMapSelection('map1', selectedCharacter)}>Map 1</button>
-        <button onClick={() => {
-          updateAgentPosition();
-        }}>Move Agent</button>
+        <button className="map-button" onClick={() => handleMapSelection('map0', selectedCharacter)}>Map 0</button>
+        <button className="map-button" onClick={() => handleMapSelection('map1', selectedCharacter)}>Map 1</button>
+        <button className="map-button" onClick={updateAgentPosition}>Move Agent</button>
       </div>
 
       <div style={backgroundStyle}>
@@ -308,8 +306,8 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
             position: 'absolute',
             left: `${x}px`,
             top: `${y}px`,
-            width: '40px',
-            height: '40px',
+            width: '60px',
+            height: '60px',
           };
 
           const characterStyle = {
@@ -322,18 +320,7 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
             
           };
 
-          const costListStyle = {
-            position: 'absolute',
-            top: 0,
-            left: '1050px',
-            width: '200px',
-            height: '100%',
-            backgroundColor: 'black', 
-            overflow: 'auto',
-            color: 'green',
-          };
-
-          return (
+           return (
             <div key={index}>
             <div key={index} style={coinStyle}>
               {collectedCoins.includes(coords) ? (
@@ -361,7 +348,7 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
                 </span>
               )}
             </div>
-            <div style={costListStyle}>
+            <div className='costListStyle'>
             <h2>Cost List</h2>
             <ul>
               {moveCosts.map((cost, index) => (

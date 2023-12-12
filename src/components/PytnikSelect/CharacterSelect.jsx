@@ -1,4 +1,5 @@
 import React from 'react';
+import './CharacterSelection.css'
 
 function CharacterSelection({ selectedCharacter, onSelectCharacter }) {
   const characters = [
@@ -8,18 +9,17 @@ function CharacterSelection({ selectedCharacter, onSelectCharacter }) {
     { id: 4, name: 'Micko - A*', image: 'src/img/Micko.png' },
   ];
 
-  // Check if selectedCharacter is not null or undefined
   const characterImageUrl = selectedCharacter ? [selectedCharacter.image] : [];
 
   return (
-    <div style={containerStyle}>
+    <div className="character-selection-container">
       <select
         value={selectedCharacter ? selectedCharacter.name : ''}
         onChange={(e) => {
           const selectedCharacter = characters.find((character) => character.name === e.target.value);
           onSelectCharacter(selectedCharacter);
         }}
-        style={selectStyle}
+        className="character-select"
       >
         {characters.map((character) => (
           <option key={character.id} value={character.name}>
@@ -28,39 +28,14 @@ function CharacterSelection({ selectedCharacter, onSelectCharacter }) {
         ))}
       </select>
       {selectedCharacter && (
-        <div style={imageContainerStyle}>
-          {/* Check if selectedCharacter.image is not null or undefined */}
+        <div className="character-image-container">
           {selectedCharacter.image && (
-            <img src={selectedCharacter.image} alt={selectedCharacter.name} style={imageStyle} />
+            <img src={selectedCharacter.image} alt={selectedCharacter.name} className="character-image" />
           )}
         </div>
       )}
     </div>
   );
 }
-
-const containerStyle = {
-  display: 'flex',
-  alignItems: 'center',
-};
-
-const selectStyle = {
-  padding: '5px',
-  fontSize: '16px',
-  backgroundColor: 'black',
-  border: '1px solid #ccc',
-  borderRadius: '4px',
-  width: '150px',
-  cursor: 'pointer',
-};
-
-const imageContainerStyle = {
-  marginLeft: '10px',
-};
-
-const imageStyle = {
-  width: '50px',
-  height: '50px',
-};
 
 export default CharacterSelection;
