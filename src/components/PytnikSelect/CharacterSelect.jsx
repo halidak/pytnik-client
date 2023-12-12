@@ -1,15 +1,15 @@
 import React from 'react';
 
-
 function CharacterSelection({ selectedCharacter, onSelectCharacter }) {
-
   const characters = [
-    { id: 1, name: 'Aki - Pohlepni', image : 'src/img/Aki.png'},
-    { id: 2, name: 'Jocke - Brute force' , image : 'src/img/Jocke.png'},
-    { id: 3, name: 'Uki - Grananje i ogranicavanje' ,   image : 'src/img/Uki.png'},
-    { id: 4, name: 'Micko - A*', image : 'src/img/Micko.png' },
+    { id: 1, name: 'Aki - Pohlepni', image: 'src/img/Aki.png' },
+    { id: 2, name: 'Jocke - Brute force', image: 'src/img/Jocke.png' },
+    { id: 3, name: 'Uki - Grananje i ogranicavanje', image: 'src/img/Uki.png' },
+    { id: 4, name: 'Micko - A*', image: 'src/img/Micko.png' },
   ];
-  const characterImageUrl = [selectedCharacter.image];
+
+  // Check if selectedCharacter is not null or undefined
+  const characterImageUrl = selectedCharacter ? [selectedCharacter.image] : [];
 
   return (
     <div style={containerStyle}>
@@ -29,7 +29,10 @@ function CharacterSelection({ selectedCharacter, onSelectCharacter }) {
       </select>
       {selectedCharacter && (
         <div style={imageContainerStyle}>
-          <img src={selectedCharacter.image} alt={selectedCharacter.name} style={imageStyle} />
+          {/* Check if selectedCharacter.image is not null or undefined */}
+          {selectedCharacter.image && (
+            <img src={selectedCharacter.image} alt={selectedCharacter.name} style={imageStyle} />
+          )}
         </div>
       )}
     </div>

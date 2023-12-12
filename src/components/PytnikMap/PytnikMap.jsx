@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import terrain from '../../img/terrain.png';
 import coin from '../../img/coin.png';
 import collectedCoin from '../../img/collected_coin.png';
@@ -18,6 +18,11 @@ function Map() {
   const [moveCosts, setMoveCosts] = useState([]);
   const [totalCost, setTotalCost] = useState(0);
   //TODO: ADD RETURN TO INITAL STATE
+
+  useEffect(() => {
+    const initialMap = 'map0';
+    handleMapSelection(initialMap, selectedCharacter);
+  }, []); 
 
   useEffect(() => {
     const mapUrl =
@@ -64,46 +69,21 @@ function Map() {
   }, [moveCosts]);
 
   useEffect(() => {
-    const initializeAgentPath = async () => {
-      try {
-        const selectedCharacterId = selectedCharacter.id;
-        const response = await axios.post('http://127.0.0.1:8000/game/move/', {
-          mapName: selectedMap,
-          characterId: selectedCharacterId,
-        });
-  
-        const updatedAgentPath = response.data.updatedAgentPath;
-        console.log(response.data)
-  
-        if (selectedAgentPath == null) {
-          setSelectedAgentPath(updatedAgentPath);
-          
-        }
-      } catch (error) {
-        console.error('Error updating agent position to Django:', error);
-      }
-    };
-  
-    if (selectedMap || selectedAgentPath == null) {
-      initializeAgentPath();
-    }
-    
-  }, [selectedMap, selectedAgentPath, selectedCharacter]);
-  
-  
-  useEffect(() => {
     const resetAgentAndMap = async () => {
       try {
+        console.log('Resetting agent and map. Selected character:', selectedCharacter);
         resetAgentPosition();
       } catch (error) {
         console.error('Error resetting agent position:', error);
       }
     };
-
+  
     if (selectedMap && selectedCharacter) {
       resetAgentAndMap();
       resetAgentPosition();
     }
+
+    handleMapSelection(selectedMap, selectedCharacter);
   }, [selectedCharacter]);
 
   const characterImages = {
@@ -124,23 +104,27 @@ function Map() {
     position: 'relative',
   };
 
-  const handleMapSelection = async (mapName, selectedCharacter) => {
-    try {
-      const selectedCharacterId = selectedCharacter.id;
-      const response = await axios.post('http://127.0.0.1:8000/game/move/', {
-        mapName: mapName,
-        characterId: selectedCharacterId,
-      });
-  
-      const updatedAgentPath = response.data.updatedAgentPath;
-  
-      setSelectedAgentPath(updatedAgentPath);
-    } catch (error) {
-      console.error('Error sending map selection to Django:', error);
-    }
-    setSelectedMap(mapName);
-  };
-  
+const handleMapSelection = async (mapName, selectedCharacter) => {
+  try {
+    setSelectedCharacter(selectedCharacter); // Update character state first
+
+    const selectedCharacterId = selectedCharacter.id;
+    console.log("KARAKTER2", selectedCharacterId)
+    const response = await axios.post('http://127.0.0.1:8000/game/move/', {
+      mapName: mapName,
+      characterId: selectedCharacterId,
+    });
+
+    const updatedAgentPath = response.data.updatedAgentPath;
+    console.log(updatedAgentPath)
+
+    setSelectedAgentPath(updatedAgentPath);
+  } catch (error) {
+    console.error('Error sending map selection to Django:', error);
+  }
+
+  setSelectedMap(mapName);
+};
 
   const updateAgentPosition = async () => {
     const mapUrl =
@@ -190,6 +174,72 @@ function Map() {
       setAgentPathIndex(0);
     }
   };
+
+  const updateAgentPosition2 = async () => {
+    const mapUrl =
+      selectedMap === 'map0'
+        ? '/src/components/PytnikMap/Maps/map0.txt'
+        : '/src/components/PytnikMap/Maps/map1.txt';
+  
+    const delayBetweenSteps = 1000; // Set the delay between steps in milliseconds
+  
+    let totalMoveCost = 0;
+    const moveCosts = [];
+  
+    const moveStep = async (stepIndex) => {
+      if (stepIndex < selectedAgentPath.length) {
+        const currentAgentPathIndex = selectedAgentPath[stepIndex];
+        setAgentPosition(currentAgentPathIndex);
+        setAgentPathIndex(stepIndex + 1);
+  
+        const collectedCoin = mapCoordinates[currentAgentPathIndex];
+        setCollectedCoins((prevCoins) => [...prevCoins, collectedCoin]);
+  
+        try {
+          const response = await fetch(mapUrl);
+          const data = await response.text();
+          const lines = data.split('\n');
+          const numRows = lines.length;
+          const newMap = new Array(numRows);
+  
+          for (let i = 0; i < numRows; i++) {
+            newMap[i] = new Array(numRows).fill(0);
+          }
+  
+          for (let i = 0; i < numRows; i++) {
+            const values = lines[i].split(',').slice(2).map(value => parseInt(value.trim()));
+            for (let j = 0; j < values.length; j++) {
+              const rowIndex = i;
+              const colIndex = j;
+              if (colIndex < numRows) {
+                newMap[rowIndex][colIndex] = values[j];
+                newMap[colIndex][rowIndex] = values[j];
+              }
+            }
+          }
+  
+          // Calculate the cost between the current and previous indices
+          const prevAgentPathIndex = stepIndex === 0 ? 0 : selectedAgentPath[stepIndex - 1];
+          const currentMoveCost = newMap[prevAgentPathIndex][currentAgentPathIndex];
+          moveCosts.unshift(currentMoveCost); // Add the cost to the beginning of the array
+          totalMoveCost += currentMoveCost;
+  
+          setMoveCosts([...moveCosts]);
+  
+          setTimeout(() => moveStep(stepIndex + 1), delayBetweenSteps);
+        } catch (error) {
+          console.error('Error reading map file:', error);
+        }
+      } else {
+        // Reset agent path index when the path is completed
+        setAgentPathIndex(0);
+        console.log('Total Move Cost:', totalMoveCost);
+        console.log('Move Costs:', moveCosts);
+      }
+    };
+  
+    moveStep(0); // Start the automatic movement
+  };
   
 
   const resetAgentPosition = () => {
@@ -201,18 +251,40 @@ function Map() {
     setSelectedAgentPath([currentAgentPathIndex, ...selectedAgentPath.slice(1)]);
   };
 
+
   const generateCostIndexes = (path) => {
     const indexes = [];
-    
-    indexes.push(`Cost ${path[path.length - 1]} to ${path[0]}`);
-    
-    for (let i = 0; i < path.length - 1; i++) {
-      indexes.push(`Cost ${path[i]} to ${path[i + 1]}`);
+  
+    if (path && path.length > 0) {
+      indexes.push(`Cost ${path[path.length - 1]} to ${path[0]}`);
+  
+      for (let i = 0; i < path.length - 1; i++) {
+        indexes.push(`Cost ${path[i]} to ${path[i + 1]}`);
+      }
     }
+  
     return indexes;
   };
-
+  
   const costIndexes = generateCostIndexes(selectedAgentPath);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.code === 'ArrowRight') {
+        updateAgentPosition();
+      }
+      if (event.code === 'Space') {
+        updateAgentPosition2();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [updateAgentPosition]);
+
 
   return (
     <div>
