@@ -25,10 +25,7 @@ function Map() {
   }, []); 
 
   useEffect(() => {
-    const mapUrl =
-      selectedMap === 'map0'
-        ? '/src/components/PytnikMap/Maps/map0.txt'
-        : '/src/components/PytnikMap/Maps/map1.txt';
+    const mapUrl = `/src/components/PytnikMap/Maps/${selectedMap}.txt`;
 
     fetch(mapUrl)
       .then((response) => response.text())
@@ -110,13 +107,14 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
 
     const selectedCharacterId = selectedCharacter.id;
     console.log("KARAKTER2", selectedCharacterId)
-    const response = await axios.post('http://127.0.0.1:8000/game/move/', {
+    const response = await axios.post('http://127.0.0.1:8000/game/get-path/', {
       mapName: mapName,
       characterId: selectedCharacterId,
     });
 
     const updatedAgentPath = response.data.updatedAgentPath;
     console.log(updatedAgentPath)
+    console.log("matrix", response.data.costMatrix)
 
     setSelectedAgentPath(updatedAgentPath);
   } catch (error) {
@@ -127,11 +125,7 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
 };
 
   const updateAgentPosition = async () => {
-    const mapUrl =
-      selectedMap === 'map0'
-        ? '/src/components/PytnikMap/Maps/map0.txt'
-        : '/src/components/PytnikMap/Maps/map1.txt';
-
+    const mapUrl = `/src/components/PytnikMap/Maps/${selectedMap}.txt`;
         
     if (agentPathIndex < selectedAgentPath.length) {
   
@@ -176,10 +170,7 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
   };
 
   const updateAgentPosition2 = async () => {
-    const mapUrl =
-      selectedMap === 'map0'
-        ? '/src/components/PytnikMap/Maps/map0.txt'
-        : '/src/components/PytnikMap/Maps/map1.txt';
+    const mapUrl = `/src/components/PytnikMap/Maps/${selectedMap}.txt`;
   
     const delayBetweenSteps = 1000; // Set the delay between steps in milliseconds
   
@@ -218,10 +209,9 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
             }
           }
   
-          // Calculate the cost between the current and previous indices
           const prevAgentPathIndex = stepIndex === 0 ? 0 : selectedAgentPath[stepIndex - 1];
           const currentMoveCost = newMap[prevAgentPathIndex][currentAgentPathIndex];
-          moveCosts.unshift(currentMoveCost); // Add the cost to the beginning of the array
+          moveCosts.unshift(currentMoveCost); 
           totalMoveCost += currentMoveCost;
   
           setMoveCosts([...moveCosts]);
@@ -231,14 +221,13 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
           console.error('Error reading map file:', error);
         }
       } else {
-        // Reset agent path index when the path is completed
         setAgentPathIndex(0);
         console.log('Total Move Cost:', totalMoveCost);
         console.log('Move Costs:', moveCosts);
       }
     };
   
-    moveStep(0); // Start the automatic movement
+    moveStep(0);
   };
   
 
@@ -293,9 +282,10 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
           selectedCharacter={selectedCharacter}
           onSelectCharacter={setSelectedCharacter}
         />
-        <button className="map-button" onClick={() => handleMapSelection('map0', selectedCharacter)}>Map 0</button>
-        <button className="map-button" onClick={() => handleMapSelection('map1', selectedCharacter)}>Map 1</button>
-        <button className="map-button" onClick={updateAgentPosition}>Move Agent</button>
+        <button className="map-button" onClick={() => handleMapSelection('map0', selectedCharacter)}>Map 1</button>
+        <button className="map-button" onClick={() => handleMapSelection('map1', selectedCharacter)}>Map 2</button>
+        {/* <button className="map-button" onClick={() => handleMapSelection('map2', selectedCharacter)}>Map 3</button> */}
+        {/* <button className="map-button" onClick={updateAgentPosition}>Move Agent</button> */}
       </div>
 
       <div style={backgroundStyle}>
@@ -315,8 +305,8 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '50px',
-            height: '50px'
+            width: '70px',
+            height: '70px'
             
           };
 
