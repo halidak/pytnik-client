@@ -284,7 +284,7 @@ const handleMapSelection = async (mapName, selectedCharacter) => {
         />
         <button className="map-button" onClick={() => handleMapSelection('map0', selectedCharacter)}>Map 1</button>
         <button className="map-button" onClick={() => handleMapSelection('map1', selectedCharacter)}>Map 2</button>
-        {/* <button className="map-button" onClick={() => handleMapSelection('map2', selectedCharacter)}>Map 3</button> */}
+        <button className="map-button" onClick={() => handleMapSelection('map2', selectedCharacter)}>Map 3</button>
         {/* <button className="map-button" onClick={updateAgentPosition}>Move Agent</button> */}
       </div>
 

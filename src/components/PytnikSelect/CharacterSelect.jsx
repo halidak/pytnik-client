@@ -3,9 +3,9 @@ import './CharacterSelection.css'
 
 function CharacterSelection({ selectedCharacter, onSelectCharacter }) {
   const characters = [
-    { id: 1, name: 'Aki - Pohlepni', image: 'src/img/Aki.png' },
+    { id: 1, name: 'Aki - Greedy DFS', image: 'src/img/Aki.png' },
     { id: 2, name: 'Jocke - Brute force', image: 'src/img/Jocke.png' },
-    { id: 3, name: 'Uki - Grananje i ogranicavanje', image: 'src/img/Uki.png' },
+    { id: 3, name: 'Uki - Branch and Bound', image: 'src/img/Uki.png' },
     { id: 4, name: 'Micko - A*', image: 'src/img/Micko.png' },
   ];
 
